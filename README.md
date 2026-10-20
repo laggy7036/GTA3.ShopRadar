@@ -120,6 +120,14 @@ The mod checks executable version signatures and required hooks before installin
 
 To uninstall, close the game and remove just `GTA3.ShopRadar.asi`, its INI and its log from `scripts`.
 
+### Verify your download
+
+Each release has a `.sha256` file with the ZIP's checksum. From v0.1.2 on, releases are built by GitHub Actions and carry a signed build attestation. With the [GitHub CLI](https://cli.github.com/) installed, this confirms the ZIP was built from this repository's tag:
+
+```powershell
+gh attestation verify GTA3.ShopRadar-<version>.zip -R laggy7036/GTA3.ShopRadar
+```
+
 ### Bomb service icons
 
 Choose **Bomb type** for the original in-game bomb-shop logo with an activation badge: key (Portland ignition), clock (Staunton timer), transmitter (Shoreside remote). When the Bomb Shops row is selected with Bomb type, the menu shows all three previews together. These identify the service sold, not whether your vehicle is armed. New installations default to Bomb type; existing INI choices are preserved, and old per-type INI choices 7-12 migrate to Bomb type. The native logo is drawn from the game at runtime; only small badge shapes are built into the mod.
@@ -134,7 +142,7 @@ Download Zig **0.15.2** from <https://ziglang.org/download/0.15.2/>. On Windows:
 ./build.ps1 -Zig 'C:/path/to/zig.exe'
 ```
 
-This builds a **32-bit Windows DLL with an `.asi` extension**, runs the tests and packages the mod. Plugin-SDK was used as an ABI reference; the mod has no runtime or build dependency on Plugin-SDK. Toolchains, SDK checkout, game scripts and game files are excluded from Git.
+This builds a **32-bit Windows DLL with an `.asi` extension**, runs the tests and packages the mod. Plugin-SDK was used as an ABI reference; the mod has no runtime or build dependency on Plugin-SDK. Toolchains, SDK checkout, game scripts and game files are excluded from Git. The version number is read from the `VERSION` file.
 
 ## Development
 
@@ -143,3 +151,7 @@ This builds a **32-bit Windows DLL with an `.asi` extension**, runs the tests an
 `scripts/check-publication.ps1` is an offline check that release files contain no unexpected files, local paths or credential-like strings.
 
 This repository contains only the mod's own code, not Rockstar game files.
+
+### Contributing
+
+Contributions are welcome. Fork the repository, make your change on a branch and open a pull request. `master` is protected: a pull request can only be merged when the Windows build/test job and the sanitizer job pass. Releases are created by pushing a version tag; GitHub Actions builds, attests and publishes them. Test reports are just as welcome as code; see [Help test](#help-test).

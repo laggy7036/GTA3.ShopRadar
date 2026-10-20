@@ -11,6 +11,9 @@
 - Load menu previews read-only from the user's local HUD. Do not redistribute extracted game textures.
 - Use the wide-character (W) Windows APIs for every file path; never the ANSI (A) variants.
 - The version number lives only in `VERSION`; never hardcode it elsewhere.
+- All changes reach `master` through a pull request with green CI; `master` is protected.
+- To release: bump `VERSION` and add its `CHANGELOG.md` section in a pull request, then push tag `v<VERSION>`. Never build or upload release assets by hand.
+- Pin new GitHub Actions to a full commit SHA with the version in a comment. Compiler warnings are errors.
 - Run build.ps1 and relevant publication checks. Distinguish constructed checks, live observations and untested scenarios in docs/VALIDATION.md.
 - Public media: only reviewed game-window captures, re-encoded without metadata, stored in `docs/media/` and listed in the release package. Raw captures stay in the ignored `docs/media/drafts/`.
 - Release ZIPs contain end-user files and installation documentation, excluding local notes, saves, game files, reference dumps, toolchains and credentials.
