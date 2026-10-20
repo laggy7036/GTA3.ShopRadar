@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="270" viewBox="0 0 960 270" role="img" aria-labelledby="title desc">
+  <title id="title">Shop Radar accent palette</title>
+  <desc id="desc">An original illustration of colour frames around a light spray-can pictogram. This is not a gameplay screenshot.</desc>
+  <rect width="960" height="270" rx="18" fill="#0c141e"/>
+  <text x="32" y="46" fill="#ffce50" font-family="sans-serif" font-size="26" font-weight="bold">SHOP RADAR · ACCENT COLOURS</text>
+  <text x="32" y="75" fill="#aabccc" font-family="sans-serif" font-size="15">Original symbol detail stays intact. Only the frame changes colour.</text>
+  <defs>
+    <g id="can">
+      <rect x="-23" y="-26" width="46" height="52" rx="4" fill="#27333e"/>
+      <path d="M-9-12H9L12-5V20H-12V-5Z" fill="#edf2f6" stroke="#101820" stroke-width="3"/>
+      <path d="M-5-20H5V-12H-5Z" fill="#d7e4ee" stroke="#101820" stroke-width="3"/>
+      <path d="M5-18H12" stroke="#edf2f6" stroke-width="3"/>
+      <path d="M-6 3V14" stroke="#9daebc" stroke-width="3"/>
+    </g>
+  </defs>
+  <g font-family="sans-serif" font-size="17" fill="#f1f5f8" text-anchor="middle">
+    <g transform="translate(90 150)"><use href="#can"/><text y="60">Original</text></g>
+    <g transform="translate(246 150)"><rect x="-31" y="-34" width="62" height="68" fill="#05090e"/><rect x="-28" y="-31" width="56" height="62" fill="#43da67"/><use href="#can"/><text y="60">Green</text></g>
+    <g transform="translate(402 150)"><rect x="-31" y="-34" width="62" height="68" fill="#05090e"/><rect x="-28" y="-31" width="56" height="62" fill="#b877f0"/><use href="#can"/><text y="60">Purple</text></g>
+    <g transform="translate(558 150)"><rect x="-31" y="-34" width="62" height="68" fill="#05090e"/><rect x="-28" y="-31" width="56" height="62" fill="#ffcf42"/><use href="#can"/><text y="60">Gold</text></g>
+    <g transform="translate(714 150)"><rect x="-31" y="-34" width="62" height="68" fill="#05090e"/><rect x="-28" y="-31" width="56" height="62" fill="#4adcee"/><use href="#can"/><text y="60">Cyan</text></g>
+    <g transform="translate(870 150)"><rect x="-31" y="-34" width="62" height="68" fill="#05090e"/><rect x="-28" y="-31" width="56" height="62" fill="#ff7e70"/><use href="#can"/><text y="60">Red</text></g>
+  </g>
+  <text x="32" y="247" fill="#8ea5b8" font-family="sans-serif" font-size="13">Illustration · original artwork · not a gameplay screenshot or a redistributed game texture</text>
+</svg>
