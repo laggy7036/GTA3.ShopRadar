@@ -1,6 +1,6 @@
 # Test status
 
-Version: 0.1.0 beta, hybrid discovery.
+Version: 0.1.1 beta, hybrid discovery.
 
 ## Automated tests
 

@@ -641,7 +641,7 @@ extern "C" __declspec(dllexport) void InitializeASI() {
     GetModuleFileNameA(module,iniPath,MAX_PATH);
     char* dot=strrchr(iniPath,'.'); if(dot) strcpy(dot,".ini");
     strcpy(logPath,iniPath); dot=strrchr(logPath,'.'); if(dot) strcpy(dot,".log");
-    log("GTA3.ShopRadar 0.1.0 beta starting.");
+    log("GTA3.ShopRadar 0.1.1 beta starting.");
     if(!initialise()) log("Initialisation stopped; see diagnostics above. Game files were not modified.");
 }
 BOOL WINAPI DllMain(HINSTANCE instance,DWORD reason,LPVOID) {

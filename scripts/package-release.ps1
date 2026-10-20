@@ -1,7 +1,7 @@
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 Add-Type -AssemblyName System.IO.Compression,System.IO.Compression.FileSystem
-$releasePath=Join-Path $projectRoot 'dist/GTA3.ShopRadar-0.1.0.zip'
+$releasePath=Join-Path $projectRoot 'dist/GTA3.ShopRadar-0.1.1.zip'
 [IO.File]::Delete($releasePath)
 $package=[IO.Compression.ZipFile]::Open($releasePath,[IO.Compression.ZipArchiveMode]::Create)
 try {
@@ -23,4 +23,4 @@ try {
     }
 } finally { $package.Dispose() }
 $digest=(Get-FileHash -LiteralPath $releasePath -Algorithm SHA256).Hash.ToLowerInvariant()
-[IO.File]::WriteAllText((Join-Path $projectRoot 'dist/GTA3.ShopRadar-0.1.0.zip.sha256'),"$digest  GTA3.ShopRadar-0.1.0.zip`n")
+[IO.File]::WriteAllText((Join-Path $projectRoot 'dist/GTA3.ShopRadar-0.1.1.zip.sha256'),"$digest  GTA3.ShopRadar-0.1.1.zip`n")
