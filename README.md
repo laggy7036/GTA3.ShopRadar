@@ -38,7 +38,7 @@ This is my first public mod and it is in beta. Feedback is very welcome, especia
 
 | Tag | Behaviour |
 | --- | --- |
-| `v0.1.1` | **Recommended download.** Hybrid discovery build with current defaults and screenshots. Set `General/DynamicDiscovery=0` for the fixed catalogue only. |
+| `v0.1.2` | **Recommended download.** Hybrid discovery build with current defaults, Unicode path fix and CI-built release. Set `General/DynamicDiscovery=0` for the fixed catalogue only. |
 | `v0.1.0-fixed` | Only the ten verified stores/services; no discovery code. |
 | `v0.1.0-discovery` | Same verified catalogue plus bounded dynamic discovery of additional services (experimental, not yet tested with new shops). |
 
