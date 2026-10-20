@@ -27,6 +27,9 @@ int main() {
     }
     // Decode real user-owned HUD textures read-only; no game process/hooks needed.
     FILE* hud=fopen("../models/hud.txd","rb");
+    // CI has no game files; say so instead of passing silently. Locally the flag makes it required.
+    if(!hud && getenv("SHOPRADAR_REQUIRE_GAME_FILES")) { fprintf(stderr,"FAIL: ../models/hud.txd required but missing\n"); return 1; }
+    if(!hud) printf("SKIP: no ../models/hud.txd, real-texture decode not covered\n");
     if(hud) {
         fseek(hud,0,SEEK_END); long n=ftell(hud); rewind(hud);
         std::vector<unsigned char> bytes(n); CHECK(fread(bytes.data(),1,n,hud)==size_t(n)); fclose(hud);

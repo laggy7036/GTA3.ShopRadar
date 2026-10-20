@@ -127,7 +127,8 @@ static void rect(float x,float y,float w,float h,RGBA colour) {
 }
 static uintptr_t fontAddress(uintptr_t a) { return a+(version==0?0:version==1?0xE0:0x70); }
 static void text(float x,float y,const char* string,RGBA colour={240,240,240,255},float scale=.36f,float height=.73f) {
-    wchar_t wide[256]; MultiByteToWideChar(CP_UTF8,0,string,-1,wide,256);
+    wchar_t wide[256];
+    if(!MultiByteToWideChar(CP_UTF8,0,string,-1,wide,256)) return; // Too long or invalid: draw nothing.
     fn<void(__cdecl*)(float,float)>(fontAddress(0x501B80))(scale*windowWidth/640.0f,height*windowHeight/448.0f);
     fn<void(__cdecl*)(float)>(fontAddress(0x501BC0))(0.0f);
     fn<void(__cdecl*)(float)>(fontAddress(0x501DD0))(255.0f);
@@ -230,6 +231,13 @@ static void refreshServices() {
                                 garagesValid?32:0,settings.dynamicDiscovery);
     if(discovered.full && !discoveryLimitLogged) { log("Dynamic service capacity reached; extra candidates skipped."); discoveryLimitLogged=true; }
 }
+// Vehicle fields read for mission service checks (Plugin-SDK CVehicle/CAutomobile layout;
+// only used when vehicleAbi is true, i.e. on the validated Steam executable).
+constexpr size_t vehicleHealth=0x200;       // CVehicle::m_fHealth (float); 0 or less = wrecked.
+constexpr size_t vehicleClass=0x284;        // CVehicle::m_nVehicleClass; 0 = automobile (not boat, train, heli, plane).
+constexpr size_t automobileFlags=0x4D9;     // CAutomobile::m_nAutomobileFlags bitfield.
+constexpr unsigned char bombTypeMask=7;     // Bits 0-2: nBombType; non-zero = a bomb is already fitted.
+constexpr unsigned char fixedColourBit=32;  // Bit 5: bFixedColour; Pay 'n' Spray cannot respray it.
 static Availability currentService(Availability state,Category category,bool mission) {
     if(!mission || state!=Availability::Available || (category!=Spray && category!=Bomb)) return state;
     // On-foot markers describe an active service. In a vehicle, exclude rejections.
@@ -237,9 +245,10 @@ static Availability currentService(Availability state,Category category,bool mis
     auto car=(unsigned char*)fn<void*(__cdecl*)()>(0x4A1140)();
     if(!car) return state;
     if(!accessible((uintptr_t)car,0x4DC)) return Availability::Unknown;
-    if(*(uint32_t*)(car+0x284)!=0 || *(float*)(car+0x200)<=0) return Availability::Disabled;
-    if(category==Bomb && (car[0x4D9]&7)) return Availability::Disabled;
-    if(category==Spray && ((car[0x4D9]&32) || !fn<bool(__cdecl*)(void*)>(0x426700)(car))) return Availability::Disabled;
+    if(*(uint32_t*)(car+vehicleClass)!=0 || *(float*)(car+vehicleHealth)<=0) return Availability::Disabled;
+    if(category==Bomb && (car[automobileFlags]&bombTypeMask)) return Availability::Disabled;
+    // 0x426700 = CGarages::IsCarSprayable (Steam address).
+    if(category==Spray && ((car[automobileFlags]&fixedColourBit) || !fn<bool(__cdecl*)(void*)>(0x426700)(car))) return Availability::Disabled;
     return state;
 }
 static void __cdecl drawRadar() {
