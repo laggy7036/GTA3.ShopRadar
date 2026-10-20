@@ -33,3 +33,11 @@ Scenarios still worth testing (use a separate save):
 - Other radar/menu-hook mods and retail executables.
 
 Startup guards and signature checks reduce risk but cannot rule out every crash. Please report problems in an issue.
+
+## Dynamic discovery limits
+
+- Relocated or resized game record pools are not supported.
+- Single-item shops, custom weapon model/pickup types and unusually large garages may be intentionally skipped.
+- Nearby same-family shops/floors can be merged; known coordinates are preserved and not relocated.
+- Extra weapon shops inherit the Other weapon shops category settings, including an existing OFF choice.
+- Discovery is an INI setting; there is no separate menu row yet.

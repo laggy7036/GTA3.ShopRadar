@@ -66,3 +66,7 @@ Close GTA III and remove `scripts/GTA3.ShopRadar.asi`. Optionally remove its INI
 The obsolete absolute MissionRadius INI key is ignored. MissionRadiusPercent controls the relative range, including exact distances below 50 world units when the chosen percentage requires it.
 
 
+
+## Dynamic discovery
+
+`General/DynamicDiscovery` defaults to 1. Set it to 0 while the game is closed to use only the fixed ten-location catalogue. Discovered sprays/bomb shops use their existing categories. Other weapon shops covers the original Shoreside dealer and discovered weapon-shop clusters, keeping that category's existing INI key and settings.

@@ -144,7 +144,7 @@ int main() {
     GetFullPathNameA("build/test-settings.log",MAX_PATH,logPath,nullptr);
     DeleteFileA(iniPath); // Only this test-owned file in build.
     settings=Settings{}; loadSettings();
-    CHECK(settings.enabled && settings.radius==250);
+    CHECK(settings.enabled && settings.dynamicDiscovery && settings.radius==250);
     CHECK(settings.missionPercent==60);
     CHECK(settings.iconSize==100);
     CHECK(settings.categories[Spray].icon==1 && settings.categories[Bomb].icon==6);
@@ -164,7 +164,7 @@ int main() {
                 for(int colourValue=0;colourValue<6;++colourValue) {
                     settings=Settings{};
                     settings.enabled=enabled!=0;
-                    settings.radius=50+(checks%20)*50;
+                    settings.dynamicDiscovery=(checks%2)!=0; settings.radius=50+(checks%20)*50;
                     settings.missionPercent=25+(checks%16)*5;
                     settings.iconSize=75+(checks%3)*25;
                     settings.categories[category]={enabled!=0,iconValue,colourValue};
@@ -173,6 +173,7 @@ int main() {
                     settings=Settings{}; loadSettings();
                     CHECK(settings.enabled==expectedSettings.enabled && settings.radius==expectedSettings.radius);
                     CHECK(settings.missionPercent==expectedSettings.missionPercent);
+                    CHECK(settings.dynamicDiscovery==expectedSettings.dynamicDiscovery);
                     CHECK(settings.iconSize==expectedSettings.iconSize);
                     for(int c=0;c<CategoryCount;++c) {
                         CHECK(settings.categories[c].enabled==expectedSettings.categories[c].enabled);

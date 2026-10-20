@@ -9,6 +9,10 @@ try {
     if ($LASTEXITCODE) { throw 'Test compilation failed' }
     & ./build/policy-tests.exe
     if ($LASTEXITCODE) { throw 'Policy tests failed' }
+    & $Zig c++ -target x86_64-windows-gnu -std=c++17 -O0 tests/discovery.cpp -o build/discovery-tests.exe
+    if ($LASTEXITCODE) { throw 'Discovery test compilation failed' }
+    & ./build/discovery-tests.exe
+    if ($LASTEXITCODE) { throw 'Discovery tests failed' }
     & $Zig c++ -target x86-windows-gnu -std=c++17 -O0 tests/integration.cpp -o build/integration-tests.exe -luser32 -lkernel32 -Wall -Wextra
     if ($LASTEXITCODE) { throw 'Integration test compilation failed' }
     & ./build/integration-tests.exe

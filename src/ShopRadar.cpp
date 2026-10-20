@@ -12,6 +12,7 @@
 #include "BombIcons.h"
 #include "HudPreview.h"
 #include "RadarLayout.h"
+#include "Discovery.h"
 
 using namespace shopradar;
 static Settings settings;
@@ -31,6 +32,8 @@ static uintptr_t fontDetails;
 static uintptr_t garagePool,radarSuppressed,radarEnabled;
 static bool vehicleAbi;
 static Availability services[knownServiceCount];
+static DiscoveryResult discovered;
+static bool discoveryLimitLogged;
 static DWORD stockChecked;
 static int v(int a,int b,int c) { return version==0?a:version==1?b:c; }
 template<class T> static T fn(uintptr_t address) { return reinterpret_cast<T>(address); }
@@ -56,6 +59,7 @@ static int readInt(const char* section,const char* key,int fallback,int lo,int h
 static void loadSettings() {
     const Settings defaults;
     settings.enabled=readInt("General","Enabled",1,0,1)!=0;
+    settings.dynamicDiscovery=readInt("General","DynamicDiscovery",1,0,1)!=0;
     settings.radius=readInt("General","Radius",250,50,1000);
     settings.missionPercent=((readInt("General","MissionRadiusPercent",60,25,100)+2)/5)*5;
     settings.iconSize=((readInt("General","IconSize",100,75,125)+12)/25)*25;
@@ -72,6 +76,7 @@ static bool writeInt(const char* section,const char* key,int value) {
 }
 static void saveSettings() {
     bool ok=writeInt("General","Enabled",settings.enabled);
+    ok=writeInt("General","DynamicDiscovery",settings.dynamicDiscovery)&&ok;
     ok=writeInt("General","Radius",settings.radius)&&ok;
     ok=writeInt("General","MissionRadiusPercent",settings.missionPercent)&&ok;
     ok=writeInt("General","IconSize",settings.iconSize)&&ok;
@@ -205,7 +210,9 @@ static void refreshServices() {
                 garageService((GarageRecord*)garagePool,32,l):Availability::Unknown;
         } else services[i]=valid?weaponStock(pool,336,l):Availability::Unknown;
     }
-
+    discovered=discoverServices(valid?pool:nullptr,valid?336:0,garagesValid?(GarageRecord*)garagePool:nullptr,
+                                garagesValid?32:0,settings.dynamicDiscovery);
+    if(discovered.full && !discoveryLimitLogged) { log("Dynamic service capacity reached; extra candidates skipped."); discoveryLimitLogged=true; }
 }
 static Availability currentService(Availability state,Category category,bool mission) {
     if(!mission || state!=Availability::Available || (category!=Spray && category!=Bomb)) return state;
@@ -230,7 +237,7 @@ static void __cdecl drawRadar() {
     // Filter their sprite draw calls, never modify the game's radar/save state.
     refreshServices();
     updateWindowSize();
-    Vec2 used[knownServiceCount]; int usedCount=0;
+    Vec2 used[knownServiceCount+maxDiscoveredServices]; int usedCount=0;
     auto toScreen=fn<void(__cdecl*)(Vec2&,const Vec2&)>(v(0x4A5040,0x4A5130,0x4A50C0));
     Vec2 centre{},right{},top{};
     toScreen(centre,{0,0}); toScreen(right,{1,0}); toScreen(top,{0,1});
@@ -238,9 +245,11 @@ static void __cdecl drawRadar() {
     // Largest colour frame sets separation, so changing colour cannot re-stack icons.
     auto footprint=iconStyle({0,0},windowHeight,settings.iconSize,5,255);
     float spacing=footprint.outline.right-footprint.outline.left+2*windowHeight/480.0f;
-    for(int locationIndex=0;locationIndex<knownServiceCount;++locationIndex) {
-        const auto& location=locations[locationIndex];
-        auto state=services[locationIndex];
+    for(int locationIndex=0;locationIndex<knownServiceCount+(settings.dynamicDiscovery?discovered.count:0);++locationIndex) {
+        bool extra=locationIndex>=knownServiceCount;
+        auto& dynamic=discovered.entries[extra?locationIndex-knownServiceCount:0];
+        const auto& location=extra?dynamic.location:locations[locationIndex];
+        auto state=extra?dynamic.state:services[locationIndex];
         auto alpha=serviceOpacity(settings,location.category,origin,location.position,mission,currentService(state,location.category,mission));
         if(!alpha) continue;
         // Existing mission markers always retain priority, regardless of settings.
@@ -258,7 +267,7 @@ static void __cdecl drawRadar() {
         screen=radarSlot(screen,used,usedCount,spacing,centre,radii);
         used[usedCount++]=screen;
         auto& config=settings.categories[location.category];
-        int choice=locationIcon(config.icon,locationIndex);
+        int choice=extra && location.category==Bomb && config.icon==6?dynamic.bombIcon:locationIcon(config.icon,locationIndex);
         icon(choice,config.colour,screen,alpha);
     }
     // Original sprites AND coordinate/entity blips are drawn last, above our icons.
@@ -411,7 +420,7 @@ static void renderMenu(void* self,int index) {
         for(int r=0;r<9;++r) {
             float y=100+r*27;
             if(r==row) rect(30,y,580,24,{35,51,65,255});
-            text(38,y+3,r==0?"Mod enabled":r==1?"Icon size":r==2?"Display radius":r==3?"Mission radius":categoryNames[r-4],{240,240,240,255},.31f);
+            text(38,y+3,r==0?"Mod enabled":r==1?"Icon size":r==2?"Display radius":r==3?"Mission radius":r==8?"Other weapon shops":categoryNames[r-4],{240,240,240,255},.31f);
             char value[64];
             if(r==0) snprintf(value,sizeof(value),"%s",settings.enabled?"ON":"OFF");
             else if(r==2) snprintf(value,sizeof(value),"%d m",settings.radius);

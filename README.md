@@ -8,14 +8,14 @@ An ASI mod for classic GTA III on Windows that shows nearby shops and services o
 
 ## Choosing a version
 
-**This revision: fixed catalogue, without dynamic discovery.**
+**This revision: hybrid discovery enabled by default.**
 
 | Tag | Behaviour |
 | --- | --- |
 | `v0.1.0-fixed` | Only the ten verified stores/services; no discovery code. |
 | `v0.1.0-discovery` | Same verified catalogue plus bounded dynamic discovery of additional services. |
 
-Download the compiled ZIP from the matching release. Install only one Shop Radar ASI at a time. GitHub's **Code → Download ZIP** is source code, not a compiled mod. To build from source, check out either tag and run `build.ps1`.
+Download the compiled ZIP from the matching release. Install only one Shop Radar ASI at a time. GitHub's **Code → Download ZIP** is source code, not a compiled mod. To build from source, check out either tag and run `build.ps1`. This version can also be limited to the fixed catalogue with `General/DynamicDiscovery=0`.
 
 ## Locations
 
@@ -30,6 +30,17 @@ Default radius: **250 world units**, adjustable from **50 to 1000**, in steps of
 Icons are drawn without allocating radar blips or writing to save files. In free roam, original weapon/spray/bomb sprite calls are filtered and replaced by the catalogue. Original mission markers remain intact, including with a category disabled. The mod draws first and native markers draw afterward so native markers have overlap priority; matching mission shop markers suppress duplicates. Turning the entire mod off restores original marker behaviour.
 
 Weapon services use actual shop/out-of-stock pickup records; garages use service type, bounds and deactivation state. Known disabled/out-of-stock services are hidden. During missions, additional icons require available state and use **60% of the chosen display radius** by default, adjustable from 25% to 100% in the Mission radius row (`General/MissionRadiusPercent`). Mission garage checks also reject unsuitable vehicles, existing bombs and fixed-colour resprays on the Steam version. On foot, an active garage describes the business rather than an immediately usable vehicle service. Unknown state is hidden during missions. These checks do not cover every mission-specific access condition; see [test status](docs/VALIDATION.md) and [similar mods](docs/RESEARCH.md).
+
+## Hybrid service discovery
+
+The ten verified locations remain the baseline. With `General/DynamicDiscovery=1` (default), the mod also reads validated classic garage and pickup records every 250 ms:
+
+- Additional spray/bomb garages require explicit service types and plausible bounds. Bomb type comes from the garage record, not its island.
+- Additional weapon shops require at least two distinct weapon models in nearby for-sale/out-of-stock records on the same storey. Loose pickup types and uncertain single-item sellers are excluded.
+- Same-family candidates near a known or discovered service are merged. Known coordinates are never moved or replaced. No discoveries are written to a save or cached across sessions.
+- Extra services use the existing category/radius/mission/size/colour controls and icon separation. **Other weapon shops** controls both the original Shoreside dealer and discovered weapon sellers; its INI section stays `Shoreside weapon dealer` for compatibility.
+
+Set `DynamicDiscovery=0` in the INI while the game is closed to keep only the verified catalogue. Discovery is an INI setting, not a menu row. Up to 64 additional services are kept. On the original map, discovery finds no extra services because all ten are already in the catalogue; it is meant for future map additions using the standard game records. Relocated/expanded record pools and nonstandard service types are not supported.
 
 ## Recommended setup
 

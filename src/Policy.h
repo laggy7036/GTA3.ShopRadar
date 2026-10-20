@@ -37,12 +37,12 @@ inline constexpr const char* colourNames[] = {"Original", "Green", "Purple", "Go
 struct CategorySettings { bool enabled = true; int icon = 0; int colour = 0; };
 struct Settings {
     bool enabled = true;
+    bool dynamicDiscovery = true;
     int radius = 250;
     int missionPercent = 60;
     int iconSize = 100;
     CategorySettings categories[CategoryCount] = {{true,0,0},{true,0,0},{true,1,0},{true,6,0},{true,0,0}};
 };
-inline constexpr int knownServiceCount=sizeof(locations)/sizeof(locations[0]);
 enum class Availability { Unknown, Available, OutOfStock, Disabled };
 inline int clamp(int value, int low, int high) { return value < low ? low : value > high ? high : value; }
 inline float distanceSquared(Vec2 a, Vec2 b) { float x=a.x-b.x, y=a.y-b.y; return x*x+y*y; }
