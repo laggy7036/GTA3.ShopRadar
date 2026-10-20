@@ -1,0 +1,60 @@
+name: Test report
+description: Tell us how Shop Radar works on your setup, even if everything works.
+title: "Test report: "
+labels: ["test report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing! Reports that say "it works" are just as useful as bug reports.
+        Please do not attach save files.
+  - type: input
+    id: version
+    attributes:
+      label: Shop Radar version
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: game
+    attributes:
+      label: Game version
+      options:
+        - Steam
+        - Retail 1.0 (CD/disc)
+        - Retail 1.1 (CD/disc)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: mods
+    attributes:
+      label: ASI loader and other mods
+      placeholder: "Ultimate ASI Loader, SilentPatch III, Widescreen Fix, ..."
+  - type: checkboxes
+    id: tested
+    attributes:
+      label: What did you test?
+      options:
+        - label: Options → Shop Radar menu and changing settings
+        - label: Icons appearing and fading near shops in free roam
+        - label: Shops during an active mission
+        - label: Death, arrest or cutscenes
+        - label: Settings kept after restarting the game
+        - label: A map mod that adds new shops (discovery)
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Everything worked
+        - Mostly worked, small problems
+        - Something did not work
+        - Game crashed
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What happened, which shop or mission, and steps to reproduce if something went wrong. A game-window screenshot helps.
