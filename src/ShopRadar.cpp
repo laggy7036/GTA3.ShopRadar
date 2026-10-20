@@ -13,10 +13,17 @@
 #include "HudPreview.h"
 #include "RadarLayout.h"
 #include "Discovery.h"
+// build.ps1 generates version.h from the VERSION file.
+#if __has_include("version.h")
+#include "version.h"
+#else
+#define SHOPRADAR_VERSION "dev"
+#endif
 
 using namespace shopradar;
 static Settings settings;
-static char iniPath[MAX_PATH], logPath[MAX_PATH];
+// Wide paths keep the INI/log usable when the install path has non-ANSI characters.
+static wchar_t iniPath[MAX_PATH], logPath[MAX_PATH];
 static HMODULE module;
 static int version = -1;
 static bool menuOpen, keys[256], saveFailed;
@@ -38,7 +45,7 @@ static DWORD stockChecked;
 static int v(int a,int b,int c) { return version==0?a:version==1?b:c; }
 template<class T> static T fn(uintptr_t address) { return reinterpret_cast<T>(address); }
 static void log(const char* text) {
-    FILE* f=fopen(logPath,"a"); if(f) { fprintf(f,"%s\n",text); fclose(f); }
+    FILE* f=_wfopen(logPath,L"a"); if(f) { fprintf(f,"%s\n",text); fclose(f); }
 }
 static bool accessible(uintptr_t address, size_t length, bool executable=false) {
     MEMORY_BASIC_INFORMATION m{};
@@ -48,11 +55,20 @@ static bool accessible(uintptr_t address, size_t length, bool executable=false) 
        length>m.RegionSize-(address-(uintptr_t)m.BaseAddress)) return false;
     return !executable || (m.Protect&(PAGE_EXECUTE|PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY));
 }
+static bool widen(const char* text,wchar_t* out,int size) {
+    return MultiByteToWideChar(CP_UTF8,0,text,-1,out,size)>0;
+}
+static bool writeProfile(const char* section,const char* key,const char* value) {
+    wchar_t s[64],k[64],v[64];
+    if(!widen(section,s,64) || !widen(key,k,64) || (value && !widen(value,v,64))) return false;
+    return WritePrivateProfileStringW(s,k,value?v:nullptr,iniPath)!=FALSE;
+}
 static int readInt(const char* section,const char* key,int fallback,int lo,int hi) {
-    char text[64], *end;
-    GetPrivateProfileStringA(section,key,"",text,sizeof(text),iniPath);
+    wchar_t s[64],k[64],text[64],*end;
+    if(!widen(section,s,64) || !widen(key,k,64)) return fallback;
+    GetPrivateProfileStringW(s,k,L"",text,64,iniPath);
     if(!text[0]) return fallback;
-    long value=strtol(text,&end,10);
+    long value=wcstol(text,&end,10);
     if(end==text || *end) return fallback;
     return value<lo?lo:value>hi?hi:int(value);
 }
@@ -72,7 +88,7 @@ static void loadSettings() {
 }
 static bool writeInt(const char* section,const char* key,int value) {
     char text[32]; snprintf(text,sizeof(text),"%d",value);
-    return WritePrivateProfileStringA(section,key,text,iniPath)!=FALSE;
+    return writeProfile(section,key,text);
 }
 static void saveSettings() {
     bool ok=writeInt("General","Enabled",settings.enabled);
@@ -638,10 +654,12 @@ static bool initialise() {
 // Ultimate ASI Loader calls this export after DLL loading, outside the loader lock.
 extern "C" __declspec(dllexport) void InitializeASI() {
     static bool once=false; if(once) return; once=true;
-    GetModuleFileNameA(module,iniPath,MAX_PATH);
-    char* dot=strrchr(iniPath,'.'); if(dot) strcpy(dot,".ini");
-    strcpy(logPath,iniPath); dot=strrchr(logPath,'.'); if(dot) strcpy(dot,".log");
-    log("GTA3.ShopRadar 0.1.1 beta starting.");
+    DWORD length=GetModuleFileNameW(module,iniPath,MAX_PATH);
+    if(!length || length>=MAX_PATH) return; // No usable path: stay inert.
+    wchar_t* dot=wcsrchr(iniPath,L'.'); if(!dot) return;
+    wcscpy(dot,L".ini");
+    wcscpy(logPath,iniPath); wcscpy(wcsrchr(logPath,L'.'),L".log");
+    log("GTA3.ShopRadar " SHOPRADAR_VERSION " beta starting.");
     if(!initialise()) log("Initialisation stopped; see diagnostics above. Game files were not modified.");
 }
 BOOL WINAPI DllMain(HINSTANCE instance,DWORD reason,LPVOID) {

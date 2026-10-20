@@ -22,10 +22,11 @@ jobs:
         shell: pwsh
         run: |
           ./tests/publication.ps1
-          ./scripts/check-publication.ps1 -ReleaseZip ./dist/GTA3.ShopRadar-0.1.1.zip
+          $version=(Get-Content -LiteralPath VERSION -Raw).Trim()
+          ./scripts/check-publication.ps1 -ReleaseZip "./dist/GTA3.ShopRadar-$version.zip"
       - uses: actions/upload-artifact@v4
         with:
           name: GTA3.ShopRadar-beta
           path: |
-            dist/GTA3.ShopRadar-0.1.1.zip
-            dist/GTA3.ShopRadar-0.1.1.zip.sha256
+            dist/GTA3.ShopRadar-*.zip
+            dist/GTA3.ShopRadar-*.zip.sha256
