@@ -1,0 +1,73 @@
+name: Bug report
+description: Report a reproducible Shop Radar problem.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please do not attach personal saves, credentials, full memory dumps or unreviewed desktop captures.
+  - type: input
+    id: version
+    attributes:
+      label: Shop Radar version
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: game
+    attributes:
+      label: Game version
+      options:
+        - Steam
+        - Retail 1.0 (CD/disc)
+        - Retail 1.1 (CD/disc)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: mods
+    attributes:
+      label: ASI loader and other mods
+      placeholder: "Ultimate ASI Loader, SilentPatch III, Widescreen Fix, ..."
+  - type: dropdown
+    id: situation
+    attributes:
+      label: Where did it happen?
+      options:
+        - Free roam
+        - During a mission
+        - In the Options → Shop Radar menu
+        - At startup or while loading
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Load a save near ...
+        2. Drive to ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behaviour
+      description: Did the game crash? A game-window screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Relevant lines from scripts/GTA3.ShopRadar.log
+      description: Optional. Review the lines for personal information before pasting.
+      render: text

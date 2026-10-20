@@ -30,7 +30,7 @@ This is my first public mod and it is in beta. Feedback is very welcome, especia
 - Retail 1.0/1.1 (non-Steam) versions.
 - Map mods that add new shops (discovery).
 
-[Open a test report](https://github.com/laggy7036/GTA3.ShopRadar/issues/new?template=test_report.yml), even just to say it works on your setup. Found a bug? Use the [bug report](https://github.com/laggy7036/GTA3.ShopRadar/issues/new?template=bug_report.md).
+[Open a test report](https://github.com/laggy7036/GTA3.ShopRadar/issues/new?template=test_report.yml), even just to say it works on your setup. Found a bug? Use the [bug report](https://github.com/laggy7036/GTA3.ShopRadar/issues/new?template=bug_report.yml).
 
 ## Choosing a version
 
