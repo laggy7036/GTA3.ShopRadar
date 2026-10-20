@@ -4,7 +4,22 @@ An ASI mod for classic GTA III on Windows that shows nearby shops and services o
 
 **Beta.** No crashes have been observed in testing on the classic Steam version so far. Some gameplay situations have not been fully tested yet; see [test status](docs/VALIDATION.md), [known issues](docs/BUGS.md) and the [installation guide](INSTALL.md).
 
-![Illustration of the accent palette](docs/media/palette.svg)
+![Shop Radar icons on the radar in Staunton: Pay 'n' Spray (red frame), 8-Ball bomb shop (gold frame) and Ammu-Nation](docs/media/radar-staunton-street.jpg)
+
+*Nearby Pay 'n' Spray, 8-Ball and Ammu-Nation icons on the radar in Staunton Island (default icon size 75%).*
+
+![The Shop Radar page in the game's Options menu](docs/media/settings-menu.png)
+
+*Options → Shop Radar: per-category visibility, icon and colour frame, with radius and size settings.*
+
+<details>
+<summary>More screenshots</summary>
+
+![Spray and bomb shop icons near the radar edge while approaching through an alley](docs/media/radar-staunton-alley.jpg)
+
+*Approaching the Staunton garages: icons stay at their real positions near the radar edge.*
+
+</details>
 
 ## Choosing a version
 
@@ -13,7 +28,7 @@ An ASI mod for classic GTA III on Windows that shows nearby shops and services o
 | Tag | Behaviour |
 | --- | --- |
 | `v0.1.0-fixed` | Only the ten verified stores/services; no discovery code. |
-| `v0.1.0-discovery` | Same verified catalogue plus bounded dynamic discovery of additional services. |
+| `v0.1.0-discovery` | Same verified catalogue plus bounded dynamic discovery of additional services (experimental, not yet tested with new shops). |
 
 Download the compiled ZIP from the matching release. Install only one Shop Radar ASI at a time. GitHub's **Code → Download ZIP** is source code, not a compiled mod. To build from source, check out either tag and run `build.ps1`. This version can also be limited to the fixed catalogue with `General/DynamicDiscovery=0`.
 
@@ -29,9 +44,11 @@ Default radius: **250 world units**, adjustable from **50 to 1000**, in steps of
 
 Icons are drawn without allocating radar blips or writing to save files. In free roam, original weapon/spray/bomb sprite calls are filtered and replaced by the catalogue. Original mission markers remain intact, including with a category disabled. The mod draws first and native markers draw afterward so native markers have overlap priority; matching mission shop markers suppress duplicates. Turning the entire mod off restores original marker behaviour.
 
-Weapon services use actual shop/out-of-stock pickup records; garages use service type, bounds and deactivation state. Known disabled/out-of-stock services are hidden. During missions, additional icons require available state and use **60% of the chosen display radius** by default, adjustable from 25% to 100% in the Mission radius row (`General/MissionRadiusPercent`). Mission garage checks also reject unsuitable vehicles, existing bombs and fixed-colour resprays on the Steam version. On foot, an active garage describes the business rather than an immediately usable vehicle service. Unknown state is hidden during missions. These checks do not cover every mission-specific access condition; see [test status](docs/VALIDATION.md) and [similar mods](docs/RESEARCH.md).
+Weapon services use actual shop/out-of-stock pickup records; garages use service type, bounds and deactivation state. Known disabled/out-of-stock services are hidden. During missions, additional icons require available state and use **70% of the chosen display radius** by default, adjustable from 25% to 100% in the Mission radius row (`General/MissionRadiusPercent`). Mission garage checks also reject unsuitable vehicles, existing bombs and fixed-colour resprays on the Steam version. On foot, an active garage describes the business rather than an immediately usable vehicle service. Unknown state is hidden during missions. These checks do not cover every mission-specific access condition; see [test status](docs/VALIDATION.md) and [similar mods](docs/RESEARCH.md).
 
 ## Hybrid service discovery
+
+**Experimental: not yet tested with real new shops.** On the original map it has only been verified to add nothing extra. It has not been tried with a map mod that actually adds shops, so treat it as untested until that is done.
 
 The ten verified locations remain the baseline. With `General/DynamicDiscovery=1` (default), the mod also reads validated classic garage and pickup records every 250 ms:
 
@@ -81,9 +98,11 @@ Open **Options → Shop Radar**, an ordinary row in the game's settings list. Th
 
 Settings save automatically beside the ASI. Seven selectable icon choices (six original icons and automatic Bomb type) and six colour modes are available, with an icon preview. No downloaded art assets are needed. Gamepad controls and importing external icon artwork are not implemented.
 
-The Icon size row sits immediately below Mod enabled and cycles 75%, 100% and 125% for all custom shop icons and their previews. All colour modes share the same pictogram size. Native mission markers retain their own game size.
+The Icon size row sits immediately below Mod enabled and cycles 75% (default), 100% and 125% for all custom shop icons and their previews. All colour modes share the same pictogram size. Native mission markers retain their own game size.
 
 Icon choices change the appearance of the selected service category. Cartel is the game's C mission icon; selecting it does not add a weapon seller or mark a new location. Green, Purple, Gold, Cyan and Red (INI values 1–5) add an outlined accent frame. The pictogram stays untinted, preserving the spray can's highlights and other details. Red includes a dark inner separator so red icon artwork remains distinct from the accent. Original (0) has no extra frame.
+
+![Illustration of the accent frame colours](docs/media/palette.svg)
 
 The mod checks executable version signatures and required hooks before installing them. English classic 1.0, 1.1 and Steam address tables are included. Definitive Edition is unsupported. Failures are logged to `scripts/GTA3.ShopRadar.log`.
 

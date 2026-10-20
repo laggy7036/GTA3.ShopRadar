@@ -85,7 +85,7 @@ int main() {
     for(int state=0;state<4;++state) {
         auto availability=Availability(state);
         assert((serviceOpacity(s,AmmuNation,{0,0},{0,0},true,availability)>0)==(availability==Availability::Available));
-        assert(serviceOpacity(s,AmmuNation,{0,0},{150,0},true,availability)==0);
+        assert(serviceOpacity(s,AmmuNation,{0,0},{missionDistance(s),0},true,availability)==0);
     }
     assert(serviceOpacity(s,AmmuNation,{0,0},{74,0},true,Availability::Available)>0);
     assert(serviceOpacity(s,AmmuNation,{0,0},{100,0},false,Availability::Unknown)>0);

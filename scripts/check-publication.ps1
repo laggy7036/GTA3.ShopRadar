@@ -99,7 +99,7 @@ foreach($name in $candidates) {
     Inspect-Links $name ([Text.Encoding]::UTF8.GetString($bytes)) $candidateNames
     $manifest.Add([pscustomobject]@{path=$name;bytes=$bytes.Length;sha256=(Get-FileHash -LiteralPath $full).Hash.ToLowerInvariant()})
 }
-$releaseEntries=@('GTA3.ShopRadar.asi','GTA3.ShopRadar.ini','README.md','INSTALL.md','CHANGELOG.md','LICENSE','THIRD_PARTY.md','SECURITY.md','docs/VALIDATION.md','docs/RESEARCH.md','docs/BUGS.md','docs/media/palette.svg','docs/media/bomb-icons.svg')
+$releaseEntries=@('GTA3.ShopRadar.asi','GTA3.ShopRadar.ini','README.md','INSTALL.md','CHANGELOG.md','LICENSE','THIRD_PARTY.md','SECURITY.md','docs/VALIDATION.md','docs/RESEARCH.md','docs/BUGS.md','docs/media/palette.svg','docs/media/bomb-icons.svg','docs/media/settings-menu.png','docs/media/radar-staunton-street.jpg','docs/media/radar-staunton-alley.jpg')
 $releaseNames=@{}
 foreach($name in $releaseEntries) { $releaseNames[$name]=$true }
 if($ReleaseZip) {

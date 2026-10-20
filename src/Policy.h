@@ -39,8 +39,8 @@ struct Settings {
     bool enabled = true;
     bool dynamicDiscovery = true;
     int radius = 250;
-    int missionPercent = 60;
-    int iconSize = 100;
+    int missionPercent = 70;
+    int iconSize = 75;
     CategorySettings categories[CategoryCount] = {{true,0,0},{true,0,0},{true,1,0},{true,6,0},{true,0,0}};
 };
 enum class Availability { Unknown, Available, OutOfStock, Disabled };

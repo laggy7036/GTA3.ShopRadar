@@ -38,11 +38,11 @@ No game executable, `main.scm`, texture archive or save needs replacement. The m
 
 | Option | Values |
 | --- | --- |
-| Display radius | 50–1000 world units, steps of 50 |
-| Icon size | 75%, 100%, 125% |
+| Display radius | 50–1000 world units, steps of 50; default 250 |
+| Icon size | 75%, 100%, 125%; default 75% |
 | Each service category | Independent visibility, icon and colour frame |
 | Colours | Original, Green, Purple, Gold, Cyan, Red |
-| Mission radius | 25-100% of Display radius, 5-point steps; default 60% |
+| Mission radius | 25-100% of Display radius, 5-point steps; default 70% |
 
 Alternative colours add an outlined accent frame. The original pictogram keeps its colours and highlights. Original has no extra frame. Before loading a save, previews use read-only classic PAL8 textures from models/hud.txd. Once live radar textures exist, the game sprites take over.
 

@@ -13,6 +13,9 @@ try {
         'docs/VALIDATION.md'='docs/VALIDATION.md'; 'docs/RESEARCH.md'='docs/RESEARCH.md'
         'docs/BUGS.md'='docs/BUGS.md'
         'docs/media/palette.svg'='docs/media/palette.svg'
+        'docs/media/settings-menu.png'='docs/media/settings-menu.png'
+        'docs/media/radar-staunton-street.jpg'='docs/media/radar-staunton-street.jpg'
+        'docs/media/radar-staunton-alley.jpg'='docs/media/radar-staunton-alley.jpg'
         'docs/media/bomb-icons.svg'='docs/media/bomb-icons.svg'
     }
     foreach($name in ($files.Keys | Sort-Object)) {

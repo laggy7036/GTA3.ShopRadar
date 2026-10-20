@@ -6,6 +6,7 @@
 - Native Options entry with a custom settings page and INI persistence.
 - Short mission radius with read-only service classification and native marker priority by draw order.
 - Icon-size selection and buffered menu input.
+- Defaults: icon size 75%, display radius 250 and mission radius 70%.
 - Coloured accent frames preserving original pictogram detail.
 - Corrected font colour ABI, opaque menu backdrop, close-key gating, click coordinates, default loading and menu-table validation.
 

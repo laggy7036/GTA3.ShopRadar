@@ -61,8 +61,8 @@ static void loadSettings() {
     settings.enabled=readInt("General","Enabled",1,0,1)!=0;
     settings.dynamicDiscovery=readInt("General","DynamicDiscovery",1,0,1)!=0;
     settings.radius=readInt("General","Radius",250,50,1000);
-    settings.missionPercent=((readInt("General","MissionRadiusPercent",60,25,100)+2)/5)*5;
-    settings.iconSize=((readInt("General","IconSize",100,75,125)+12)/25)*25;
+    settings.missionPercent=((readInt("General","MissionRadiusPercent",70,25,100)+2)/5)*5;
+    settings.iconSize=((readInt("General","IconSize",75,75,125)+12)/25)*25;
     for(int i=0;i<CategoryCount;++i) {
         auto& s=settings.categories[i];
         s.enabled=readInt(categoryNames[i],"Enabled",1,0,1)!=0;

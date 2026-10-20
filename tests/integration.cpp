@@ -145,8 +145,8 @@ int main() {
     DeleteFileA(iniPath); // Only this test-owned file in build.
     settings=Settings{}; loadSettings();
     CHECK(settings.enabled && settings.dynamicDiscovery && settings.radius==250);
-    CHECK(settings.missionPercent==60);
-    CHECK(settings.iconSize==100);
+    CHECK(settings.missionPercent==70);
+    CHECK(settings.iconSize==75);
     CHECK(settings.categories[Spray].icon==1 && settings.categories[Bomb].icon==6);
     settings.categories[Spray].icon=5;
     CHECK(WritePrivateProfileStringA(categoryNames[Spray],"Icon",nullptr,iniPath));
@@ -205,7 +205,7 @@ int main() {
     CHECK(WritePrivateProfileStringA("General","IconSize","-1",iniPath));
     loadSettings(); CHECK(settings.iconSize==75);
     CHECK(WritePrivateProfileStringA("General","IconSize","garbage",iniPath));
-    loadSettings(); CHECK(settings.iconSize==100);
+    loadSettings(); CHECK(settings.iconSize==75);
     // A short down/up pair must remain buffered until the next menu frame.
     menuOpen=true; memset(queuedPress,0,sizeof(queuedPress));
     captureMenuInput(WM_KEYDOWN,VK_DOWN,0); captureMenuInput(WM_KEYUP,VK_DOWN,0);
