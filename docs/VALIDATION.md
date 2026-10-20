@@ -1,10 +1,10 @@
 # Test status
 
-Version: 0.1.1 beta, hybrid discovery.
+Version: 0.1.2 beta, hybrid discovery.
 
 ## Automated tests
 
-- 210,500 distance samples and 11,084 Windows INI/UI integration checks pass, plus 86 discovery checks.
+- 210,500 distance samples and 11,088 Windows INI/UI integration checks pass (including saving and logging in a folder with non-ANSI characters), plus 86 discovery checks.
 - Radius/fade, category controls, percentage mission radius, sizes 75/100/125, original icon colours, bounded marker nudges, retired icon migration, malformed data and startup hook guards are covered.
 - The build produces an x86 PE DLL with an `InitializeASI` export; release files pass the offline publication check.
 

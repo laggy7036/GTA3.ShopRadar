@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2 — beta
+
+- Settings and the log now work when the game folder path contains characters outside the Windows ANSI code page (for example Cyrillic, Chinese or æøå).
+- Menu text that is too long or invalid is skipped instead of being passed to the game.
+- Releases are now built and published by GitHub Actions with a signed build attestation. Verify a download with `gh attestation verify`.
+- For contributors: one `VERSION` file, compiler warnings fail the build, a sanitizer CI job, pinned GitHub Actions with Dependabot, and named vehicle fields.
+
 ## 0.1.1 — beta
 
 - Defaults: icon size 75%, display radius 250 and mission radius 70%.

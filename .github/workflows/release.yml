@@ -44,7 +44,7 @@ jobs:
         run: |
           $zip="dist/GTA3.ShopRadar-$env:VERSION.zip"
           # Release notes: this version's CHANGELOG section plus install and verification steps.
-          $changelog=Get-Content -LiteralPath CHANGELOG.md -Raw
+          $changelog=Get-Content -LiteralPath CHANGELOG.md -Raw -Encoding utf8
           $section=[regex]::Match($changelog,"(?ms)^## $([regex]::Escape($env:VERSION))\b[^\n]*\n(.*?)(?=^## |\z)").Groups[1].Value.Trim()
           if (!$section) { throw "CHANGELOG.md has no section for $env:VERSION" }
           @"
