@@ -27,6 +27,9 @@ int main() {
     }
     // Decode real user-owned HUD textures read-only; no game process/hooks needed.
     FILE* hud=fopen("../models/hud.txd","rb");
+    // CI has no game files; say so instead of passing silently. Locally the flag makes it required.
+    if(!hud && getenv("SHOPRADAR_REQUIRE_GAME_FILES")) { fprintf(stderr,"FAIL: ../models/hud.txd required but missing\n"); return 1; }
+    if(!hud) printf("SKIP: no ../models/hud.txd, real-texture decode not covered\n");
     if(hud) {
         fseek(hud,0,SEEK_END); long n=ftell(hud); rewind(hud);
         std::vector<unsigned char> bytes(n); CHECK(fread(bytes.data(),1,n,hud)==size_t(n)); fclose(hud);
@@ -140,21 +143,21 @@ int main() {
     CHECK(!accessible(UINTPTR_MAX-4,8));
     CHECK(VirtualFree(image,0,MEM_RELEASE));
     optionsEntries=nullptr;
-    GetFullPathNameA("build/test-settings.ini",MAX_PATH,iniPath,nullptr);
-    GetFullPathNameA("build/test-settings.log",MAX_PATH,logPath,nullptr);
-    DeleteFileA(iniPath); // Only this test-owned file in build.
+    GetFullPathNameW(L"build/test-settings.ini",MAX_PATH,iniPath,nullptr);
+    GetFullPathNameW(L"build/test-settings.log",MAX_PATH,logPath,nullptr);
+    DeleteFileW(iniPath); // Only this test-owned file in build.
     settings=Settings{}; loadSettings();
     CHECK(settings.enabled && settings.dynamicDiscovery && settings.radius==250);
     CHECK(settings.missionPercent==70);
     CHECK(settings.iconSize==75);
     CHECK(settings.categories[Spray].icon==1 && settings.categories[Bomb].icon==6);
     settings.categories[Spray].icon=5;
-    CHECK(WritePrivateProfileStringA(categoryNames[Spray],"Icon",nullptr,iniPath));
+    CHECK(writeProfile(categoryNames[Spray],"Icon",nullptr));
     loadSettings(); CHECK(settings.categories[Spray].icon==1);
     const char* inputs[]={"", "garbage", "12oops", "-1", "0", "49", "50", "1000", "1001", "2147483647", "99999999999999999999999", "-99999999999999999999999"};
     const int expected[]={250,250,250,50,50,50,50,1000,1000,1000,1000,50};
     for(unsigned i=0;i<sizeof(inputs)/sizeof(*inputs);++i) {
-        CHECK(WritePrivateProfileStringA("General","Radius",inputs[i],iniPath));
+        CHECK(writeProfile("General","Radius",inputs[i]));
         loadSettings(); CHECK(settings.radius==expected[i]);
     }
     for(int category=0;category<CategoryCount;++category)
@@ -200,11 +203,11 @@ int main() {
     row=1; settings.iconSize=75; change(-1); CHECK(settings.iconSize==125);
     change(1); CHECK(settings.iconSize==75);
     for(int size:{75,100,125}) { settings.iconSize=size; saveSettings(); settings.iconSize=0; loadSettings(); CHECK(settings.iconSize==size); }
-    CHECK(WritePrivateProfileStringA("General","IconSize","99999",iniPath));
+    CHECK(writeProfile("General","IconSize","99999"));
     loadSettings(); CHECK(settings.iconSize==125);
-    CHECK(WritePrivateProfileStringA("General","IconSize","-1",iniPath));
+    CHECK(writeProfile("General","IconSize","-1"));
     loadSettings(); CHECK(settings.iconSize==75);
-    CHECK(WritePrivateProfileStringA("General","IconSize","garbage",iniPath));
+    CHECK(writeProfile("General","IconSize","garbage"));
     loadSettings(); CHECK(settings.iconSize==75);
     // A short down/up pair must remain buffered until the next menu frame.
     menuOpen=true; memset(queuedPress,0,sizeof(queuedPress));
@@ -224,13 +227,23 @@ int main() {
     row=2; settings.radius=50; change(-1); CHECK(settings.radius==50);
     settings.radius=1000; change(1); CHECK(settings.radius==1000);
     // Failure must be reported; current in-memory choices must survive.
-    char realPath[MAX_PATH]; strcpy(realPath,iniPath);
-    strcpy(iniPath,"build/nonexistent-test-directory/settings.ini");
+    wchar_t realPath[MAX_PATH]; wcscpy(realPath,iniPath);
+    wcscpy(iniPath,L"build/nonexistent-test-directory/settings.ini");
     settings.radius=350; saveSettings(); CHECK(saveFailed && settings.radius==350);
-    strcpy(iniPath,realPath); saveSettings(); CHECK(!saveFailed);
-    CHECK(SetFileAttributesA(iniPath,FILE_ATTRIBUTE_READONLY));
+    wcscpy(iniPath,realPath); saveSettings(); CHECK(!saveFailed);
+    CHECK(SetFileAttributesW(iniPath,FILE_ATTRIBUTE_READONLY));
     saveSettings(); CHECK(saveFailed);
-    CHECK(SetFileAttributesA(iniPath,FILE_ATTRIBUTE_NORMAL));
+    CHECK(SetFileAttributesW(iniPath,FILE_ATTRIBUTE_NORMAL));
     saveSettings(); CHECK(!saveFailed);
+    // Install paths outside the ANSI code page (Norwegian, Cyrillic, Chinese) must still save, load and log.
+    wchar_t unicodeDir[MAX_PATH];
+    CHECK(GetFullPathNameW(L"build/test-\u00e6\u00f8\u00e5-\u041f\u0440\u0438\u0432\u0435\u0442-\u6d4b\u8bd5",MAX_PATH,unicodeDir,nullptr));
+    CreateDirectoryW(unicodeDir,nullptr); // Test-owned folder under build.
+    swprintf(iniPath,MAX_PATH,L"%ls\\GTA3.ShopRadar.ini",unicodeDir);
+    swprintf(logPath,MAX_PATH,L"%ls\\GTA3.ShopRadar.log",unicodeDir);
+    DeleteFileW(iniPath); DeleteFileW(logPath);
+    settings.radius=450; settings.iconSize=125; saveSettings(); CHECK(!saveFailed);
+    settings.radius=0; settings.iconSize=0; loadSettings(); CHECK(settings.radius==450 && settings.iconSize==125);
+    log("Unicode path log check."); CHECK(GetFileAttributesW(logPath)!=INVALID_FILE_ATTRIBUTES);
     printf("PASS: %u Windows INI and UI mutation checks; no game hooks installed\n",checks);
 }

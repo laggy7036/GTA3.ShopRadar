@@ -7,7 +7,7 @@ $root=(Resolve-Path -LiteralPath $RepoRoot).Path
 $findings=[Collections.Generic.List[object]]::new()
 $manifest=[Collections.Generic.List[object]]::new()
 function Add-Finding([string]$Path,[string]$Reason) { $findings.Add([pscustomobject]@{path=$Path;reason=$Reason}) }
-$allowed='^(\.gitignore|\.gitattributes|LICENSE|AGENTS\.md|README\.md|INSTALL\.md|CHANGELOG\.md|THIRD_PARTY\.md|SECURITY\.md|build\.ps1|scripts/(check-publication|package-release)\.ps1|src/[A-Za-z0-9_.-]+\.(cpp|h)|tests/[A-Za-z0-9_.-]+\.(cpp|ps1)|dist/GTA3\.ShopRadar\.ini|\.github/[A-Za-z0-9_./-]+\.(yml|yaml|md)|docs/[A-Za-z0-9_.-]+\.md|docs/media/[A-Za-z0-9_.-]+\.(svg|png|jpg|jpeg))$'
+$allowed='^(\.gitignore|\.gitattributes|LICENSE|VERSION|AGENTS\.md|README\.md|INSTALL\.md|CHANGELOG\.md|THIRD_PARTY\.md|SECURITY\.md|build\.ps1|scripts/(check-publication|package-release)\.ps1|src/[A-Za-z0-9_.-]+\.(cpp|h)|tests/[A-Za-z0-9_.-]+\.(cpp|ps1)|dist/GTA3\.ShopRadar\.ini|\.github/[A-Za-z0-9_./-]+\.(yml|yaml|md)|docs/[A-Za-z0-9_.-]+\.md|docs/media/[A-Za-z0-9_.-]+\.(svg|png|jpg|jpeg))$'
 $patterns=@{
     'GitHub credential'='(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})'
     'API credential'='sk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}'

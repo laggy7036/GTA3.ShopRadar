@@ -9,6 +9,8 @@
 - Keep collision offsets bounded near the real marker anchor; tolerate overlap rather than showing a false location.
 - Keep selectable icon IDs separate from internally resolved bomb variants. Preserve migration of retired INI values.
 - Load menu previews read-only from the user's local HUD. Do not redistribute extracted game textures.
+- Use the wide-character (W) Windows APIs for every file path; never the ANSI (A) variants.
+- The version number lives only in `VERSION`; never hardcode it elsewhere.
 - Run build.ps1 and relevant publication checks. Distinguish constructed checks, live observations and untested scenarios in docs/VALIDATION.md.
 - Public media: only reviewed game-window captures, re-encoded without metadata, stored in `docs/media/` and listed in the release package. Raw captures stay in the ignored `docs/media/drafts/`.
 - Release ZIPs contain end-user files and installation documentation, excluding local notes, saves, game files, reference dumps, toolchains and credentials.

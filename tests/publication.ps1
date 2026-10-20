@@ -38,7 +38,8 @@ New-Item -ItemType Directory -Path (Join-Path $fixture 'docs/media') -Force | Ou
 Expect-Check $false
 Remove-Item -LiteralPath (Join-Path $fixture 'docs/media/unsafe.svg')
 $zip=Join-Path $fixture 'build/release.zip'
-Copy-Item -LiteralPath (Join-Path $projectRoot 'dist/GTA3.ShopRadar-0.1.1.zip') -Destination $zip
+$version=(Get-Content -LiteralPath (Join-Path $projectRoot 'VERSION') -Raw).Trim()
+Copy-Item -LiteralPath (Join-Path $projectRoot "dist/GTA3.ShopRadar-$version.zip") -Destination $zip
 Expect-Check $true $zip
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive=[IO.Compression.ZipFile]::Open($zip,[IO.Compression.ZipArchiveMode]::Update)

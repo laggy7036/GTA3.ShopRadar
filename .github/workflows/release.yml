@@ -1,0 +1,65 @@
+name: Release
+# Pushing a tag such as v0.1.2 builds the mod on GitHub, attests the ZIP and publishes a pre-release.
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write       # create the release
+  id-token: write       # sign the build attestation
+  attestations: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check tag matches VERSION
+        shell: pwsh
+        run: |
+          $version=(Get-Content -LiteralPath VERSION -Raw).Trim()
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw "Tag $env:GITHUB_REF_NAME does not match VERSION $version" }
+          "VERSION=$version" >> $env:GITHUB_ENV
+      - name: Download pinned Zig toolchain
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force tools | Out-Null
+          Invoke-WebRequest 'https://ziglang.org/download/0.15.2/zig-x86_64-windows-0.15.2.zip' -OutFile tools/zig.zip
+          $expected='3a0ed1e8799a2f8ce2a6e6290a9ff22e6906f8227865911fb7ddedc3cc14cb0c'
+          if ((Get-FileHash tools/zig.zip -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) { throw 'Zig checksum mismatch' }
+          Expand-Archive -LiteralPath tools/zig.zip -DestinationPath tools
+      - name: Test and build ASI
+        shell: pwsh
+        run: ./build.ps1
+      - name: Check publication candidate and release contents
+        shell: pwsh
+        run: |
+          ./tests/publication.ps1
+          ./scripts/check-publication.ps1 -ReleaseZip "./dist/GTA3.ShopRadar-$env:VERSION.zip"
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/GTA3.ShopRadar-*.zip
+      - name: Publish pre-release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $zip="dist/GTA3.ShopRadar-$env:VERSION.zip"
+          # Release notes: this version's CHANGELOG section plus install and verification steps.
+          $changelog=Get-Content -LiteralPath CHANGELOG.md -Raw
+          $section=[regex]::Match($changelog,"(?ms)^## $([regex]::Escape($env:VERSION))\b[^\n]*\n(.*?)(?=^## |\z)").Groups[1].Value.Trim()
+          if (!$section) { throw "CHANGELOG.md has no section for $env:VERSION" }
+          @"
+          **Beta.** Download **GTA3.ShopRadar-$env:VERSION.zip** below (not the "Source code" archives) and follow [INSTALL.md](https://github.com/$env:GITHUB_REPOSITORY/blob/$env:GITHUB_REF_NAME/INSTALL.md).
+
+          ## What's new
+
+          $section
+
+          ## Verify the download
+
+          This ZIP was built by GitHub Actions from tag ``$env:GITHUB_REF_NAME`` and carries a signed build attestation:
+
+          ``````
+          gh attestation verify GTA3.ShopRadar-$env:VERSION.zip -R $env:GITHUB_REPOSITORY
+          ``````
+          "@ | Set-Content -LiteralPath build/release-notes.md -Encoding utf8
+          gh release create $env:GITHUB_REF_NAME $zip "$zip.sha256" --verify-tag --prerelease --title "Shop Radar $env:VERSION beta" --notes-file build/release-notes.md
